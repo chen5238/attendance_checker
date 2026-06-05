@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出席者チェッカー</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            background: #fff;
+            border-radius: 8px;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            resize: vertical;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result-container {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #e74c3c;
+            border-radius: 4px;
+        }
+        .result-title {
+            font-weight: bold;
+            color: #c0392b;
+            margin-bottom: 10px;
+        }
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        .no-absentees {
+            color: #27ae60;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>出席者チェッカー</h1>
+
+    <div class="form-group">
+        <label for="attendanceInput">出席者・テキスト入力領域</label>
+        <!-- プレースホルダーを指示のテキストに変更 -->
+        <textarea id="attendanceInput" placeholder="出席者のリストをコピーしてここに添付してください"></textarea>
+    </div>
+
+    <button onclick="checkAttendance()">欠席者をチェックする</button>
+
+    <div class="result-container" id="resultContainer" style="display: none;">
+        <div class="result-title" id="resultTitle">欠席者一覧</div>
+        <div id="resultOutput"></div>
+    </div>
+
+    <script>
+        // 固定メンバーリスト
+        const members = [
+            "陳　世雄",
+            "伊田　浩貴",
+            "吉田　悠人",
+            "橋本　司",
+            "戸田　優香",
+            "黒田　翔太",
+            "今井　柚杜",
+            "草野　祐輔",
+            "本長谷　将太",
+            "木嶋　友香",
+            "鈴木　友崇",
+            "山本　崇靖"
+        ];
+
+        function checkAttendance() {
+            // 入力された文字列を取得し、すべての全角・半角スペースを除去して比較用ベースを作成
+            const inputText = document.getElementById('attendanceInput').value;
+            const normalizedInput = inputText.replace(/[\s ]/g, '');
+            
+            // 固定メンバーから、スペースを除去した状態で入力テキストに含まれていない人を抽出
+            const absentees = members.filter(member => {
+                const normalizedMember = member.replace(/[\s ]/g, '');
+                return !normalizedInput.includes(normalizedMember);
+            });
+            
+            // 結果表示領域の準備
+            const container = document.getElementById('resultContainer');
+            const output = document.getElementById('resultOutput');
+            const title = document.getElementById('resultTitle');
+            
+            container.style.display = 'block';
+            output.innerHTML = ''; // 初期化
+
+            if (absentees.length === 0) {
+                title.textContent = "チェック結果";
+                output.innerHTML = '<p class="no-absentees">全員出席しています！</p>';
+                container.style.borderLeftColor = '#27ae60';
+                title.style.color = '#27ae60';
+            } else {
+                title.textContent = `欠席者一覧 (${absentees.length}名)`;
+                container.style.borderLeftColor = '#e74c3c';
+                title.style.color = '#c0392b';
+                
+                const ul = document.createElement('ul');
+                absentees.forEach(name => {
+                    const li = document.createElement('li');
+                    li.textContent = name;
+                    ul.appendChild(li);
+                });
+                output.appendChild(ul);
+            }
+        }
+    </script>
+
+</body>
+</html>
